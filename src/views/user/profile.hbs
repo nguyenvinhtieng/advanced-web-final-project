@@ -1,0 +1,48 @@
+{{> modals/updateInfor}}
+{{#if_eq account.role 'admin'}}
+{{> header/admin}}
+{{/if_eq}}
+{{#if_eq account.role 'department'}}
+{{> header/department}}
+{{/if_eq}}
+{{#if_eq account.role 'student'}}
+{{> header/user}}
+{{/if_eq}}
+<div id="profile-page"></div>
+<div id="socket-page"></div>
+<div class="wrapper">
+    <div class="profile">
+        <div class="profile-header">
+            <div class="avatar-lg">
+                <img src="{{user.avatar}}" alt="">
+            </div>
+            <div class="profile-data">
+                <h1 class="profile-data-name">
+                    {{user.username}}
+                </h1>
+                <a href="mailto: {{user.email}}" class="profile-data-email">
+                    Email: {{user.email}}
+                </a>
+                <p class="profile-data-class">
+                    Class: {{user.class}}
+                </p>
+                <p class="profile-data-faculty">
+                    Faculty: {{user.faculty}}
+                </p>
+                {{#if_eq user._id account._id}}
+                <label for="modal-update-infor" class="profile-data-edit btn-edit-profile">
+                    Edit profile <ion-icon name="create"></ion-icon>
+                </label>
+                {{/if_eq}}
+            </div>
+        </div>
+        <div class="profile-timeline">
+            {{#each user_first_10_posts}}
+            {{> post/post}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+{{> modals/deleteComment}}
+{{> modals/deletePost}}
+{{> modals/updatePost}}

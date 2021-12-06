@@ -1,0 +1,19 @@
+<li class="comment">
+    <div class="avatar-sm">
+        <img src={{this.userAvatar}} alt="">
+    </div>
+    <div class="comment-content">
+        <div class="comment-user">
+            <span>{{this.username}}</span>
+        </div>
+        <div class="comment-text">
+            {{this.content}}
+        </div>
+    </div>
+    <div class="comment-time">{{this.date}}</div>
+    {{#if_eq this.id_user @root.account._id}}
+    <div class="comment-operation">
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+    </div>
+    {{/if_eq}}
+</li>
