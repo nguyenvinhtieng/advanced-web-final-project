@@ -31,7 +31,6 @@ class PostController {
     async updatePost(req, res) {
         const account = req.account;
         const { id } = req.params;
-
         const imagePath = await uploadImage(req.file.path, req.file.filename);
         const { content, urlYoutube } = req.body;
         const updatePost = await Post.findByIdAndUpdate(id, {

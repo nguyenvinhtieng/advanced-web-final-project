@@ -18,14 +18,14 @@ module.exports = {
             })
         </script>`
     },
-    checkPage: function (count, page, category) {
-        let c = count / 10;
+    checkPage: function (count, page, category, department = "") {
+        let c = (count - count % 10) / 10
         let d = count % 10;
         c = d > 0 ? c + 1 : c
         let body = ``
         let cate = category ? category : ''
         if (cate) {
-            for (let i = 0; i < c - 1; i++) {
+            for (let i = 0; i < c; i++) {
                 body += (i == page - 1) ? `<li class="notifications-page notifications-active">
                                             <a href="/category/${cate}?page=${i + 1}">${i + 1}</a>
                                         </li>` :
@@ -33,7 +33,20 @@ module.exports = {
                                             <a href="/category/${cate}?page=${i + 1}">${i + 1}</a>
                                         </li>`
             }
-        } else {
+            if (body == '') body = "Do not have any notifications"
+        }
+        else if (department) {
+            for (let i = 0; i < c; i++) {
+                body += (i == page - 1) ? `<li class="notifications-page notifications-active">
+                                            <a href="/department/notify?page=${i + 1}">${i + 1}</a>
+                                        </li>` :
+                    `<li class="notifications-page">
+                                            <a href="/department/notify?page=${i + 1}">${i + 1}</a>
+                                        </li>`
+            }
+            if (body == '') body = "Do not have any notifications"
+        }
+        else {
             for (let i = 0; i < c - 1; i++) {
                 body += (i == page - 1) ? `<li class="notifications-page notifications-active">
                                             <a href="/notify?page=${i + 1}">${i + 1}</a>
@@ -42,6 +55,7 @@ module.exports = {
                                             <a href="/notify?page=${i + 1}">${i + 1}</a>
                                         </li>`
             }
+            if (body == '') body = "Do not have any notifications"
         }
         return body
     },

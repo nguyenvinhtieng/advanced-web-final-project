@@ -6,6 +6,9 @@ const expressSession = require('express-session');
 const methodOverride = require('method-override');
 const path = require('path');
 const app = express();
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
+
 const PORT = 3000;
 
 const credentials = require('./config/credentials');
@@ -13,6 +16,7 @@ const route = require('./route/index');
 const db = require('./config/db')
 const initAdmin = require('./config/admin')
 const handlebarsHelpers = require('./app/lib/handlebars-helpers');
+const handleSocket = require('./socket/index')
 
 app.use(methodOverride('_method'));
 
@@ -36,6 +40,8 @@ route(app)
 
 initAdmin.createAdminAccount();
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`App listening at http://localhost:${PORT}`);
 })
+
+handleSocket(io)

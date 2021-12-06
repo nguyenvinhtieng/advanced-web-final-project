@@ -64,7 +64,7 @@ function showErrorToast(message, title = "Error", duration = 3000) {
         duration: duration
     })
 }
-
+let MY_URL = 'http://localhost:3000/'
 let imgDepartments = ["pcthssv", 'pdh', 'psdh', 'pdtvmt', 'pktvkdcl', 'ptc', 'tdtclc', 'ttth', 'sdtc', 'atem', "tthtdnvcsv", 'kl', 'ttnnthbdvh', 'vcsktvkd', 'kmtcn', 'kddt', 'kcntt', 'kqtkd', 'kmtvbhld', 'kldcd', 'ktcnh', 'kgdqt'];
 
 let departments = ["Phòng CTHSSV", "Phòng Đại Học", "Phòng Sau Đại Học", "Phòng Điện Toán Và Máy Tính", "Phòng Khảo Thí Và Kiểm Định Chất Lượng", "Phòng Tài Chính", "TDT Creative Language Center", "Trung Tâm Tin Học", "Trung Tâm Đào Tạo phát triển xã hội(SDTC)", "Trung Tâm Phát Triển Khoa Học Quản Lý và Ứng Dụng Công Nghệ (ATEM)", "Trung Tâm Hợp Tác Doanh Nghiệp Và Cựu Sinh Viên", "Khoa Luật", "Trung Tâm Ngoại Ngữ Tin Học Bồi Dưỡng Văn Hóa", " Viện chính sách kinh tế và kinh doanh", "Khoa Mỹ thuật công nghiệp", "Khoa Điện – Điện tử", "Khoa Công nghệ thông tin", "Khoa Quản trị kinh doanh", "Khoa Môi trường và bảo hộ lao động", "Khoa Lao động công đoàn", "Khoa Tài chính ngân hàng", "Khoa giáo dục quốc tế"];
@@ -76,6 +76,16 @@ if (document.getElementById('socket-page')) {
 }
 
 function socketPage() {
+    var socket = io(MY_URL);
+    socket.on("connect", () => {
+        socket.send();
+    })
+    socket.emit('user-join', { user: document.getElementById('role-user').innerHTML.trim() || "department or admin" })
+    socket.on("has-new-notify", (data) => {
+        let message = `${data.username} Just posted new Notification for category(${data.category})<b> <a href='/notify/${data._id}'>Click here</a> </b> to view`
+        showInfoToast(message, title = "Notification", duration = 10000)
+    })
+
     let dropDown = document.querySelector('.drop-down')
     dropDown.addEventListener('click', () => {
         document.querySelector('.menu-dropdown').style.display = 'block'
@@ -228,22 +238,16 @@ function socketPage() {
                 showErrorToast("Please choose a Category")
                 return
             }
-            const form = e.target
-            const body = JSON.stringify({
-                title: form.elements.title.value,
-                content: form.elements.content.value,
-                category: form.elements.category.value,
-            })
             $.ajax({
                 url: '/department/createNotify',
                 type: 'POST',
                 data: { title, content, category },
                 success: function (response) {
                     showSuccessToast("Create Notification successfully!")
-                    setTimeout(function () {
+                    socket.emit('event-create-noti', response.notification)
+                    setTimeout(() => {
                         window.location.reload()
                     }, 500)
-
                 }
             })
 
@@ -263,7 +267,7 @@ function socketPage() {
                 imgPreview.setAttribute("src", url);
                 let btnDeleteImg = document.querySelector('.delete-img')
                 btnDeleteImg.addEventListener('click', (e) => {
-                    e.target.files = null
+                    document.getElementById('post-img').value = null
                     inputImgPost.setAttribute("value", "")
                     document.querySelector('.modal-image-preview').style.display = 'none'
                 })
@@ -286,9 +290,13 @@ function socketPage() {
                 .then(res => res.json())
                 .then(res => {
                     showSuccessToast("Post successfully! ")
+                    console.log(res)
                     document.getElementById('modal-create-newpost').checked = false
                     document.getElementById('contentPost').value = ""
                     document.querySelector('.youtube-link').value = ""
+                    document.querySelector('.post-img-posted').value = null
+                    console.log(document.getElementById('post-img'))
+                    document.querySelector('.img-prv-create-post').style.display = 'none'
                     renderNewPost(res.newPost)
                 })
                 .catch(error => {
@@ -360,6 +368,7 @@ function socketPage() {
         }
 
         eventDeletePost()
+        eventEditPost()
 
     }
     //++++++++++++++++++++++
@@ -417,4 +426,38 @@ function eventDeletePost() {
         post.innerHTML = ''
         post.style.display = 'none'
     }
+}
+
+function eventEditPost() {
+    let postClicked = ''
+    let contentBox = document.getElementById('postContentEdit')
+    let idBox = document.getElementById('postIdEdit')
+    let youtubeBox = document.querySelector('.youtube-link-edit-post')
+    let imageBox = document.querySelector('.postImageEdit')
+    window.addEventListener('click', (e) => {
+        ///API/post/:id   post
+        if (e.target.classList.contains('labelEditPost')) {
+            idBox.value = e.target.getAttribute('data-id')
+            contentBox.innerHTML = e.target.getAttribute('data-content')
+            youtubeBox.value = e.target.getAttribute('data-youtube')
+            if (e.target.getAttribute('data-img-link')) {
+                imageBox.src = e.target.getAttribute('data-img-link')
+                imageBox.parentNode.style.display = "block"
+            } else {
+                imageBox.src = ""
+                imageBox.parentNode.style.display = "none"
+            }
+        }
+    })
+    let imgInput = document.getElementById('post-img-edit-post')
+    imgInput.addEventListener('change', (e) => {
+        alert("run")
+        let preview = document.querySelector('.postImageEdit')
+        preview.setAttribute("src", window.URL.createObjectURL(e.target.files[0]))
+    })
+    // function deletePostFromView() {
+    //     let post = postClicked.parentNode.parentNode.parentNode.parentNode.parentNode
+    //     post.innerHTML = ''
+    //     post.style.display = 'none'
+    // }
 }

@@ -19,7 +19,8 @@
                     <label data-id="{{ this._id}}" class="labelDeletePost" for="modal-delete-post"> Delete </label>
                 </li>
                 <li class="item-operation edit">
-                    <label data-id="{{ this._id}}" for="modal-edit-post"> Edit </label>
+                    <label data-id="{{ this._id}}" data-content="{{ this.content}}" data-img-link="{{this.imagePath}}"
+                        data-youtube="{{this.urlYoutube}}" class="labelEditPost" for="modal-edit-post"> Edit </label>
                 </li>
             </ul>
         </div>

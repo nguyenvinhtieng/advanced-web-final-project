@@ -2,6 +2,7 @@
 {{> modals/createNotification}}
 <div id="notifications-page"></div>
 <div id="socket-page"></div>
+<div id="role-user"></div>
 <div class="wrapper">
     <div class="notifications">
         <div class="notifications-header">
@@ -13,39 +14,10 @@
         <div class="notifications-content">
             <div class="notifications-listpage">
                 <ul>
-                    <li class="notifications-page notifications-active">
+                    {{{checkPage count page "" "department"}}}
+                    {{!-- <li class="notifications-page notifications-active">
                         <a href="">1</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">2</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">3</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">4</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">5</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">6</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">7</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">8</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">9</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">10</a>
-                    </li>
-                    <li class="notifications-page">
-                        <a href="">11</a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
             <ul class="notifications-list">

@@ -33,6 +33,8 @@ class NotificationController {
             account,
             notifications_of_department,
         });
+
+
     }
 
     async createNotify(req, res, next) {
@@ -44,9 +46,8 @@ class NotificationController {
             title: req.body.title,
             content: req.body.content,
         });
-        console.log(req.body)
         await notification.save();
-        res.status(200).send({ notification });
+        return res.json({ notification });
     }
 
     async updateNotify(req, res, next) {
