@@ -304,72 +304,11 @@ function socketPage() {
                     console.log(error)
                 })
         }
-        function renderNewPost(post) {
-            let main = document.querySelector('#posts')
-            main.innerHTML = `
-            <div class="post">
-            <div class="post-header">
-                <div class="avatar-sm">
-                    <img src='${post.userAvatar}' alt="Khoa Công Nghệ Thông Tin DH TDT">
-                </div>
-                <div class="post-header-infor">
-                    <a href="/user/${post.id_user}" class="post-header-name">
-                        ${post.username}
-                    </a>
-                    <div class="post-header-time">
-                        ${post.date}
-                    </div>
-                </div>
-                <div class="post-header-operation">
-                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
-                    <ul class="list-operation">
-                        <li class="item-operation delete">
-                            <label for="modal-delete-post"> Delete </label>
-                        </li>
-                        <li class="item-operation edit">
-                            <label for="modal-edit-post"> Edit </label>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="post-content">
-                <div class="post-text">
-                    ${post.content}
-                </div>
-                ${post.imagePath ? `<div class="post-img">
-                                        <img src="${post.imagePath}" alt="">
-                                    </div>` : ""}
-                ${post.urlYoutube ? `<div class="post-video">
-                                        <iframe width="560" height="315" src=${post.urlYoutube} title="YouTube video player" frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen></iframe>
-                                    </div>` : ``}
-                
-            </div>
-            <div class="post-interact">
-                <div class="comment-count">
-                    <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-                    <span>0 Comment</span>
-                </div>
-                <form action="/API/comment/{{this._id}}/create" method="post">
-                    <div class="add-comment">
-                        <input type="text" placeholder="Add a comment..." name="content">
-                        <button>
-                            <ion-icon name="paper-plane"></ion-icon>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <ul class="post-comment">
-                
-            </ul>
-        </div>
-            ` + main.innerHTML
-        }
 
         eventDeletePost()
         eventEditPost()
-
+        eventDeleteComment()
+        eventAddComment()
     }
     //++++++++++++++++++++++
     // ACCOUNT PAGE
@@ -460,4 +399,143 @@ function eventEditPost() {
     //     post.innerHTML = ''
     //     post.style.display = 'none'
     // }
+}
+
+function eventDeleteComment() {
+    let btnDeleteComment = document.querySelector('.btnDeleteComment')
+    var commentClicked = ''
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('labelDeleteComment')) {
+            let idComment = e.target.getAttribute('data-id')
+            let idPost = e.target.parentNode.parentNode.parentNode.parentNode.getAttribute('data-id')
+            btnDeleteComment.setAttribute('data-id', idComment)
+            btnDeleteComment.setAttribute('data-postid', idPost)
+            console.log("ID POST CMT DELETE " + idPost)
+            commentClicked = e.target
+        }
+    })
+    btnDeleteComment.onclick = (e) => {
+        document.querySelector('#modal-delete-comment').checked = false
+        let id = e.target.getAttribute('data-id')
+        let postId = e.target.getAttribute('data-postid')
+        $.ajax({
+            url: `/API/comment/${postId}/${id}`,
+            type: 'delete',
+            success: (response) => {
+                showSuccessToast("Comment deleted!")
+                commentClicked.parentNode.parentNode.parentNode.style.display = `none`
+                commentClicked.parentNode.parentNode.parentNode.innerHTML = ``
+            }
+        })
+    }
+}
+
+function eventAddComment() {
+    window.addEventListener('click', (e) => {
+        if (e.target.closest('.btnAddComment')) {
+            console.log("RUNNINGGGGGGGGG")
+            let idPost = e.target.getAttribute('data-id')
+            let inputBox = document.querySelector(`.input-comment-${idPost.trim()}`)
+            if (inputBox.value.trim() === '') {
+                showErrorToast("Content of comment empty!")
+                return;
+            }
+            $.ajax({
+                url: `/API/comment/${idPost}/create`,
+                type: 'post',
+                data: { content: inputBox.value.trim() },
+                success: response => {
+                    showSuccessToast("Comment was saved!")
+                    console.log(response)
+                    renderNewComment(response, idPost)
+                }
+            })
+        }
+    })
+}
+function renderNewComment(comment, idTag) {
+    let main = document.getElementById(`${idTag}`)
+    main.innerHTML = `<li class="comment">
+                        <div class="avatar-sm">
+                            <img src="${comment.userAvatar}" alt="">
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-user">
+                                <span>${comment.username}</span>
+                            </div>
+                            <div class="comment-text">
+                            ${comment.content}
+                            </div>
+                        </div>
+                        <div class="comment-time">Just a minutes</div>
+                        <div class="comment-operation">
+                            <ion-icon name="ellipsis-vertical"></ion-icon>
+                            <div class="comment-operation-delete">
+                                <label class="delete labelDeleteComment" for="modal-delete-comment" data-id="${comment._id}">Delete</label>
+                            </div>
+                        </div>
+                    </li>`
+        + main.innerHTML
+}
+function renderNewPost(post) {
+    let main = document.querySelector('#posts')
+    main.innerHTML = `
+                <div class="post">
+                <div class="post-header">
+                    <div class="avatar-sm">
+                        <img src='${post.userAvatar}' alt="Khoa Công Nghệ Thông Tin DH TDT">
+                    </div>
+                    <div class="post-header-infor">
+                        <a href="/user/${post.id_user}" class="post-header-name">
+                            ${post.username}
+                        </a>
+                        <div class="post-header-time">
+                            ${post.date}
+                        </div>
+                    </div>
+                    <div class="post-header-operation">
+                        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                        <ul class="list-operation">
+                            <li class="item-operation delete">
+                                <label for="modal-delete-post"> Delete </label>
+                            </li>
+                            <li class="item-operation edit">
+                                <label for="modal-edit-post"> Edit </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-text">
+                        ${post.content}
+                    </div>
+                    ${post.imagePath ? `<div class="post-img">
+                                            <img src="${post.imagePath}" alt="">
+                                        </div>` : ""}
+                    ${post.urlYoutube ? `<div class="post-video">
+                                            <iframe width="560" height="315" src=${post.urlYoutube} title="YouTube video player" frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
+                                        </div>` : ``}
+                    
+                </div>
+                <div class="post-interact">
+                    <div class="comment-count">
+                        <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                        <span>0 Comment</span>
+                    </div>
+                    <form action="/API/comment/{{this._id}}/create" method="post">
+                        <div class="add-comment">
+                            <input type="text" placeholder="Add a comment..." name="content">
+                            <button>
+                                <ion-icon name="paper-plane"></ion-icon>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <ul class="post-comment">
+                    
+                </ul>
+            </div>
+    ` + main.innerHTML
 }

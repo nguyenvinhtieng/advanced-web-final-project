@@ -1,5 +1,9 @@
 module.exports = {
     if_eq: function (a, b, opts) {
+        console.log("a" + a)
+        console.log("b" + b)
+        console.log("opts" + opts)
+        console.log(opts)
         a = a.toString();
         b = b.toString();
         if (a == b) {

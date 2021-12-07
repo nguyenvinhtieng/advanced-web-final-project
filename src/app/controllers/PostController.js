@@ -1,3 +1,4 @@
+const mongoose = require('mongoose')
 const Post = require('../models/Post');
 const Account = require('../models/Account');
 const uploadImage = require("../lib/uploadImage");
@@ -63,15 +64,20 @@ class PostController {
     }
 
     async addComment(req, res) {
+        const commentId = new mongoose.Types.ObjectId()
         const account = await Account.findOne({
             _id: req.session.user_id,
         }).lean();
         const { post_id } = req.params;
         const { content } = req.body;
-        const comment = { content, id_user: account._id, username: account.username, userAvatar: account.avatar };
-        const post = await Post.findById(post_id);
-        post.comments.push(comment);
-        await post.save();
+        const comment = { _id: commentId, content, id_user: account._id, username: account.username, userAvatar: account.avatar };
+        await Post.findByIdAndUpdate(post_id, {
+            $push: {
+                comments: {
+                    comment
+                },
+            },
+        });
         res.status(200).send(comment);
     }
 

@@ -48,16 +48,17 @@
             <ion-icon name="chatbox-ellipses-outline"></ion-icon>
             <span>{{this.comments.length}} Comment</span>
         </div>
-        <form action="/API/comment/{{this._id}}/create" method="post">
+        {{!-- <form action="/API/comment/{{this._id}}/create" method="post"> --}}
             <div class="add-comment">
-                <input type="text" placeholder="Add a comment..." name="content">
-                <button>
-                    <ion-icon name="paper-plane"></ion-icon>
+                <input type="text" placeholder="Add a comment..." name="content" class="input-comment-{{this._id}}">
+                <button data-id="{{this._id}}" class="btnAddComment">
+                    <ion-icon data-id="{{this._id}}" name="paper-plane"></ion-icon>
                 </button>
             </div>
-        </form>
+            {{!--
+        </form> --}}
     </div>
-    <ul class="post-comment">
+    <ul class="post-comment" data-id="{{this._id}}" id="{{this._id}}">
         {{#each this.comments}}
         {{> post/comment}}
         {{/each}}
