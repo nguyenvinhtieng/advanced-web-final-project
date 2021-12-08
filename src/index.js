@@ -9,7 +9,7 @@ const app = express();
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const credentials = require('./config/credentials');
 const route = require('./route/index');

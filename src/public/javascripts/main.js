@@ -536,7 +536,7 @@ function eventLoadMorePost(user = "") {
         $(window).scroll(function () {
             var position = $(window).scrollTop();
             var bottom = $(document).height() - $(window).height();
-            if (position > bottom) {
+            if (position >= bottom) {
                 console.log("LOADING ...........................")
                 let url = user ? `/API/post?page=${page}&user=${idUserURL}` : `/API/post?page=${page}`
                 $.ajax({
