@@ -1,5 +1,6 @@
 {{> modals/updateInfor}}
 {{#if_eq account.role 'admin'}}
+<div id="admin"></div>
 {{> header/admin}}
 {{/if_eq}}
 {{#if_eq account.role 'department'}}
@@ -37,10 +38,11 @@
                 {{/if_eq}}
             </div>
         </div>
-        <div class="profile-timeline">
+        <div class="profile-timeline" id="posts">
             {{#each user_first_10_posts}}
             {{> post/post}}
             {{/each}}
+            <div class="read-all-post"> You are read all posts</div>
         </div>
     </div>
 </div>

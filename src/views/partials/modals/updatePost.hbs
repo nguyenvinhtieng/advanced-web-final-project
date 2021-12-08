@@ -1,4 +1,4 @@
-<form action="">
+<form action="" id="formUpdatePost">
     <input type="checkbox" id="modal-edit-post" hidden>
     <label for="modal-edit-post" class="layer-hidden-close-modal"></label>
     <div class="modal-edit-post">
@@ -21,21 +21,21 @@
                 </div>
             </div>
             <div class="modal-content-content">
-                <input type="text" id="postIdEdit">
+                <input type="text" id="postIdEdit" hidden>
                 <input type="checkbox" hidden id="open-input-youtube-link">
-                <textarea name="content" id="postContentEdit" placeholder="What do you think.."
-                    id="postContentEdit"></textarea>
-                <input type="file" id="post-img-edit-post" hidden>
-                <input type="text" class="youtube-link-edit-post" placeholder="Youtube link">
+                <textarea name="content" id="postContentEdit" placeholder="What do you think.."></textarea>
+                <input type="file" name="image" id="post-img-edit-post" hidden>
+                <input type="text" name="urlYoutube" id="linkYoutubeEdit" class="youtube-link-edit-post"
+                    placeholder="Youtube link">
             </div>
             <div class="modal-image-preview">
-                <img src="" alt="" id="img-post-preview" class="postImageEdit">
-                <div class="delete-img">
+                <img src="" alt="" class="postImageEdit">
+                {{!-- <div class="">
                     <ion-icon name="close-circle-outline"></ion-icon>
-                </div>
+                </div> --}}
             </div>
             <div class="modal-content-attach">
-                <label for="post-img" class="modal-content-attach-photo">
+                <label for="post-img-edit-post" class="modal-content-attach-photo">
                     <ion-icon name="images"></ion-icon>
                 </label>
                 <label for="open-input-youtube-link" class="modal-content-attach-youtube">

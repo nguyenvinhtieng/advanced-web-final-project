@@ -1,4 +1,4 @@
-    {{> modals/changePassword}}
+{{> modals/changePassword}}
 
 <header class="header">
     <input type="checkbox" id="toggle-menu" hidden>
@@ -12,14 +12,14 @@
                 <ion-icon name="close"></ion-icon>
             </label>
             <li class='menu-item img-department mobile'>
-                <div class='menu-link'>
+                <a href="/user/{{account._id}}" class='menu-link'>
                     <div class="avatar-sm">
                         <img src="{{account.avatar}}" alt="">
                     </div>
                     <span class="name">
                         {{account.username}}
                     </span>
-                </div>
+                </a>
             </li>
             <li class="header-menu-item">
                 <a class="header-menu-link" href="/home">
@@ -34,13 +34,13 @@
                 </a>
             </li>
             <li class="header-menu-item mobile">
-                <label for="modal-change-password" class="header-menu-link change-password" >
+                <label for="modal-change-password" class="header-menu-link change-password">
                     <ion-icon name="lock-closed-outline"></ion-icon>
                     <span class="mobile"> Change password</span>
                 </label>
             </li>
             <li class="header-menu-item logout mobile">
-                <a class="header-menu-link" href="#">
+                <a class="header-menu-link" href="/logout">
                     <ion-icon name="log-out-outline"></ion-icon>
                     <span class="mobile">Logout</span>
                 </a>
@@ -60,8 +60,12 @@
             <li class='menu-item drop-down'>
                 <ion-icon name="caret-down-outline"></ion-icon>
                 <ul class="menu-dropdown">
-                    <a href='/user/{{account._id}}' class="menu-dropdown-item profile"><ion-icon name="person-circle-outline"></ion-icon> My profile</a>
-                    <a href="/logout" class="menu-dropdown-item log-out"><ion-icon name="log-out-outline"></ion-icon>Log out</a>
+                    <a href='/user/{{account._id}}' class="menu-dropdown-item profile">
+                        <ion-icon name="person-circle-outline"></ion-icon> My profile
+                    </a>
+                    <a href="/logout" class="menu-dropdown-item log-out">
+                        <ion-icon name="log-out-outline"></ion-icon>Log out
+                    </a>
                 </ul>
             </li>
 
@@ -71,7 +75,3 @@
         </label>
     </div>
 </header>
-
-    
-
-

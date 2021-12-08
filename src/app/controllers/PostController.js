@@ -30,6 +30,7 @@ class PostController {
     }
 
     async updatePost(req, res) {
+        console.log("UPDATE POST SERVER RUNNING")
         const account = req.account;
         const { id } = req.params;
         const imagePath = await uploadImage(req.file.path, req.file.filename);
@@ -40,15 +41,28 @@ class PostController {
             urlYoutube,
         });
         res.status(200).send({ updatePost });
+        // const account = req.account;
+        // const { id } = req.params;
+        // console.log("UPDATE POST SERVER")
+        // if (req.file) {
+        //     const imagePath = await uploadImage(req.file.path, req.file.filename);
+        // }
+        // const { content, urlYoutube } = req.body;
+        // const data = { content, urlYoutube }
+        // if (imagePath) { data.imagePath = imagePath };
+        // const updatePost = await Post.findByIdAndUpdate(id, data);
+        // res.status(200).send({ updatePost });
     }
 
     async deletePost(req, res) {
+        console.log("DELETE POST")
         const { id } = req.params;
         const deletePost = await Post.findByIdAndDelete(id);
         res.status(200).send({ deletePost });
     }
 
     async getPosts(req, res) {
+        const account = req.account;
         const { page, user } = req.query;
         if (user) {
             const posts = await Post.find({ id_user: user })
@@ -56,10 +70,10 @@ class PostController {
                 .skip(page * 10)
                 .limit(10)
                 .lean();
-            res.status(200).send(posts);
+            res.status(200).send({ posts, user: account._id });
         } else {
             const posts = await Post.find().sort({ date: -1 }).skip(page * 10).limit(10).lean();
-            res.status(200).send({ posts });
+            res.status(200).send({ posts, user: account._id });
         }
     }
 
@@ -71,13 +85,17 @@ class PostController {
         const { post_id } = req.params;
         const { content } = req.body;
         const comment = { _id: commentId, content, id_user: account._id, username: account.username, userAvatar: account.avatar };
-        await Post.findByIdAndUpdate(post_id, {
-            $push: {
-                comments: {
-                    comment
-                },
-            },
-        });
+        const post = await Post.findById(post_id);
+        post.comments.push(comment)
+        await post.save()
+        // const cmt = new Comment(comment)
+        // await Post.findByIdAndUpdate(post_id, {
+        //     $push: {
+        //         comments: {
+        //             cmt
+        //         },
+        //     },
+        // });
         res.status(200).send(comment);
     }
 

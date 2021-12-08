@@ -1,9 +1,6 @@
 module.exports = {
     if_eq: function (a, b, opts) {
-        console.log("a" + a)
-        console.log("b" + b)
-        console.log("opts" + opts)
-        console.log(opts)
+        // console.log(admin)
         a = a.toString();
         b = b.toString();
         if (a == b) {
@@ -22,7 +19,7 @@ module.exports = {
             })
         </script>`
     },
-    checkPage: function (count, page, category, department = "") {
+    checkPage: function (count, page, category, department) {
         let c = (count - count % 10) / 10
         let d = count % 10;
         c = d > 0 ? c + 1 : c
@@ -51,7 +48,7 @@ module.exports = {
             if (body == '') body = "Do not have any notifications"
         }
         else {
-            for (let i = 0; i < c - 1; i++) {
+            for (let i = 0; i < c; i++) {
                 body += (i == page - 1) ? `<li class="notifications-page notifications-active">
                                             <a href="/notify?page=${i + 1}">${i + 1}</a>
                                         </li>` :

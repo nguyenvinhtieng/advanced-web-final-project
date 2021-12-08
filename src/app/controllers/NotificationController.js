@@ -3,10 +3,17 @@ const setFlashMessage = require('../lib/setFlashMessage')
 
 class NotificationController {
     async renderDetailNotify(req, res, next) {
-        const account = req.account;
-        const id = req.params.id;
-        const notification = await Notification.findOne({ _id: id }).lean();
-        res.render("./user/detailNotification", { account, notification });
+        try {
+            const account = req.account;
+            const id = req.params.id;
+            const notification = await Notification.findOne({ _id: id }).lean();
+            if (!notification)
+                res.redirect('/404')
+            res.render("./user/detailNotification", { account, notification });
+        } catch (e) {
+            res.redirect('/404')
+        }
+
     }
 
     async renderNotifyPage(req, res, next) {

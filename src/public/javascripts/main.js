@@ -203,9 +203,11 @@ function socketPage() {
             }
             formUpdateAccount.submit()
         }
-
-
         eventDeletePost()
+        eventEditPost()
+        eventDeleteComment()
+        eventAddComment()
+        eventLoadMorePost("user")
     }
     //++++++++++++++++++++++
     // NOTIFICATIONS PAGE
@@ -280,22 +282,27 @@ function socketPage() {
         formCreatePost.onsubmit = (e) => {
             e.preventDefault()
             let contentPost = document.querySelector('#contentPost')
+            let contentYoutubeLink = document.querySelector('#youtubeLinkCreate').value.trim()
+            if (contentYoutubeLink.trim() != ""
+                && !contentYoutubeLink.trim().startsWith("https://www.youtube.com/watch?v=")) {
+                showErrorToast("Youtube link not valid!")
+                return;
+            }
             if (contentPost.value.trim() === '') {
                 showErrorToast('Please enter content');
                 return
             }
             const body = new FormData(e.target)
             showInfoToast("Post is being processed!")
+            document.getElementById('modal-create-newpost').checked = false
+
             fetch('/API/post/create', { method: 'post', body })
                 .then(res => res.json())
                 .then(res => {
                     showSuccessToast("Post successfully! ")
-                    console.log(res)
-                    document.getElementById('modal-create-newpost').checked = false
                     document.getElementById('contentPost').value = ""
                     document.querySelector('.youtube-link').value = ""
                     document.querySelector('.post-img-posted').value = null
-                    console.log(document.getElementById('post-img'))
                     document.querySelector('.img-prv-create-post').style.display = 'none'
                     renderNewPost(res.newPost)
                 })
@@ -309,6 +316,7 @@ function socketPage() {
         eventEditPost()
         eventDeleteComment()
         eventAddComment()
+        eventLoadMorePost()
     }
     //++++++++++++++++++++++
     // ACCOUNT PAGE
@@ -349,7 +357,7 @@ function eventDeletePost() {
     btnDeletePost.onclick = (e) => {
         let id = e.target.getAttribute('data-id').trim()
         let url = `/API/post/${id}`
-        fetch(url, { method: 'delete', body: {} })
+        fetch(url, { method: 'delete' })
             .then(res => res.json())
             .then(res => {
                 showSuccessToast("Post deleted!")
@@ -373,32 +381,58 @@ function eventEditPost() {
     let idBox = document.getElementById('postIdEdit')
     let youtubeBox = document.querySelector('.youtube-link-edit-post')
     let imageBox = document.querySelector('.postImageEdit')
+    let imgInput = document.getElementById('post-img-edit-post')
     window.addEventListener('click', (e) => {
         ///API/post/:id   post
         if (e.target.classList.contains('labelEditPost')) {
             idBox.value = e.target.getAttribute('data-id')
             contentBox.innerHTML = e.target.getAttribute('data-content')
-            youtubeBox.value = e.target.getAttribute('data-youtube')
+            youtubeBox.value =
+                e.target.getAttribute('data-youtube') ?
+                    ("https://www.youtube.com/watch?v=" + e.target.getAttribute('data-youtube').split('/')[4])
+                    : ""
             if (e.target.getAttribute('data-img-link')) {
                 imageBox.src = e.target.getAttribute('data-img-link')
                 imageBox.parentNode.style.display = "block"
             } else {
                 imageBox.src = ""
-                imageBox.parentNode.style.display = "none"
+                imgInput.value = null
             }
         }
     })
-    let imgInput = document.getElementById('post-img-edit-post')
+
     imgInput.addEventListener('change', (e) => {
-        alert("run")
         let preview = document.querySelector('.postImageEdit')
         preview.setAttribute("src", window.URL.createObjectURL(e.target.files[0]))
     })
-    // function deletePostFromView() {
-    //     let post = postClicked.parentNode.parentNode.parentNode.parentNode.parentNode
-    //     post.innerHTML = ''
-    //     post.style.display = 'none'
-    // }
+    let formUpdatePost = document.querySelector('#formUpdatePost')
+    formUpdatePost.onsubmit = function (e) {
+        e.preventDefault()
+        let postId = document.querySelector('#postIdEdit').value
+        let content = document.querySelector('#postContentEdit').value
+        let ytbLink = document.querySelector('#linkYoutubeEdit').value.trim()
+
+        if (content.trim() === '') {
+            showErrorToast("Content cannot be empty")
+            return
+        }
+        if (ytbLink !== '' && !ytbLink.startsWith('https://www.youtube.com/watch?v=')) {
+            showErrorToast("Youtube link not valid!")
+            return
+        }
+        const body = new FormData(e.target)
+        console.log("url: " + `/API/post/${postId}`)
+        fetch(`/API/post/${postId}`, { method: 'post', body })
+            // .then(res => res.json())
+            .then(res => {
+                console.log("runnning..........2")
+                console.log(res)
+                console.log(res.json())
+            })
+            .catch(error =>
+                console.log(error)
+            )
+    }
 }
 
 function eventDeleteComment() {
@@ -423,6 +457,8 @@ function eventDeleteComment() {
             type: 'delete',
             success: (response) => {
                 showSuccessToast("Comment deleted!")
+                let count = document.querySelector(`.comment-length-${postId}`)
+                count.innerHTML = +(count.innerHTML.trim()) - 1
                 commentClicked.parentNode.parentNode.parentNode.style.display = `none`
                 commentClicked.parentNode.parentNode.parentNode.innerHTML = ``
             }
@@ -446,7 +482,9 @@ function eventAddComment() {
                 data: { content: inputBox.value.trim() },
                 success: response => {
                     showSuccessToast("Comment was saved!")
-                    console.log(response)
+                    inputBox.value = ""
+                    let count = document.querySelector(`.comment-length-${idPost}`)
+                    count.innerHTML = +(count.innerHTML.trim()) + 1
                     renderNewComment(response, idPost)
                 }
             })
@@ -471,12 +509,137 @@ function renderNewComment(comment, idTag) {
                         <div class="comment-operation">
                             <ion-icon name="ellipsis-vertical"></ion-icon>
                             <div class="comment-operation-delete">
-                                <label class="delete labelDeleteComment" for="modal-delete-comment" data-id="${comment._id}">Delete</label>
+                                <label class="delete labelDeleteComment" for="modal-delete-comment" data-id="${comment._id}" >Delete</label>
                             </div>
                         </div>
                     </li>`
         + main.innerHTML
 }
+
+function eventLoadMorePost(user = "") {
+    let isAdmin = document.querySelector('#admin') ? true : false;
+    var page = 1;
+    let idUserURL
+    if (user)
+        idUserURL = window.location.href.split('/')[4];
+    window.addEventListener("load", e => {
+        $(window).scroll(function () {
+            var position = $(window).scrollTop();
+            var bottom = $(document).height() - $(window).height();
+            if (position > bottom) {
+                console.log("LOADING ...........................")
+                let url = user ? `/API/post?page=${page}&user=${idUserURL}` : `/API/post?page=${page}`
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    success: response => {
+                        if (response.posts.length == 0) {
+                            document.querySelector('.read-all-post').style.display = 'flex'
+                        } else {
+                            page++;
+                            renderTenPost(response.posts, response.user, isAdmin)
+                        }
+                    }
+                })
+            }
+        });
+
+    })
+}
+
+function renderTenPost(posts, idUser, isAdmin = false) {
+    let main = document.querySelector('#posts')
+    if (posts.length === 0) {
+        main.innerHTML += "<div class='read-all-post'> You are read all posts</div>"
+    }
+    posts.forEach(post => {
+        let postDiv = document.createElement('div')
+        postDiv.setAttribute('class', 'post')
+        postDiv.innerHTML = `
+        <div class="post">
+            <div class="post-header">
+                <div class="avatar-sm">
+                    <img src='${post.userAvatar}' alt="Khoa Công Nghệ Thông Tin DH TDT">
+                </div>
+                <div class="post-header-infor">
+                    <a href="/user/${post.id_user}" class="post-header-name">
+                        ${post.username}
+                    </a>
+                    <div class="post-header-time">
+                        ${post.date}
+                    </div>
+                </div>
+                ${(post.id_user == idUser || isAdmin) ? (
+                `<div class="post-header-operation">
+                    <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                    <ul class="list-operation">
+                        <li class="item-operation delete">
+                            <label for="modal-delete-post" class="labelDeletePost" data-id="${post._id}"> Delete </label>
+                        </li>
+                        <li class="item-operation edit">
+                            <label data-id="${post._id}" data-content="${post.content}" data-img-link="${post.imagePath}" data-youtube="${post.urlYoutube}" class="labelEditPost" for="modal-edit-post"> Edit </label>
+                        </li>
+                    </ul>
+                </div>`) : ""}
+            </div>
+            <div class="post-content">
+                <div class="post-text">
+                    ${post.content}
+                </div>
+                ${post.imagePath ? `
+                <div class="post-img">
+                    <img src="${post.imagePath}" alt="">
+                </div>` : ""}
+                ${post.urlYoutube ? `
+                <div class="post-video">
+                    <iframe width="560" height="315" src=${post.urlYoutube} title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>` : ``}
+            </div>
+            <div class="post-interact">
+                <div class="comment-count">
+                    <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                    <span> <span class="comment-length-${post._id}">${post.comments.length}</span> Comment</span>
+                </div>
+            <div class="add-comment">
+                <input type="text" placeholder="Add a comment..." name="content" class="input-comment-${post._id}">
+                <button data-id="${post._id}" class="btnAddComment">
+                    <ion-icon data-id="${post._id}"  name="paper-plane"></ion-icon>
+                </button>
+            </div>
+            <ul class="post-comment" data-id="${post._id}" id="${post._id}">
+                ${post.comments.map(comment => {
+                    //console.log(comment)
+                    return `<li class="comment">
+                                <div class="avatar-sm">
+                                    <img src="${comment.userAvatar}" alt="">
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-user">
+                                        <span>${comment.username}</span>
+                                    </div>
+                                    <div class="comment-text">
+                                        ${comment.content}
+                                    </div>
+                                </div>
+                                <div class="comment-time">${comment.date}</div>
+                                ${(comment.id_user == idUser || isAdmin) ? (`
+                                <div class="comment-operation">
+                                    <ion-icon name="ellipsis-vertical"></ion-icon>
+                                    <div class="comment-operation-delete">
+                                        <label class="delete labelDeleteComment" for="modal-delete-comment" data-id="${comment._id}">Delete</label>
+                                    </div>
+                                </div>`) : ""}
+                            </li>`
+                }).join('')}
+            </ul>
+        </div>
+        `
+        main.innerHTML += postDiv.innerHTML
+    })
+}
+
 function renderNewPost(post) {
     let main = document.querySelector('#posts')
     main.innerHTML = `
@@ -497,10 +660,10 @@ function renderNewPost(post) {
                         <ion-icon name="ellipsis-vertical-outline"></ion-icon>
                         <ul class="list-operation">
                             <li class="item-operation delete">
-                                <label for="modal-delete-post"> Delete </label>
+                                <label for="modal-delete-post" class="labelDeletePost" data-id="${post._id}"> Delete </label>
                             </li>
                             <li class="item-operation edit">
-                                <label for="modal-edit-post"> Edit </label>
+                                <label data-id="${post._id}" data-content="${post.content}" data-img-link="${post.imagePath}" data-youtube="${post.urlYoutube}" class="labelEditPost" for="modal-edit-post"> Edit </label>
                             </li>
                         </ul>
                     </div>
@@ -522,18 +685,16 @@ function renderNewPost(post) {
                 <div class="post-interact">
                     <div class="comment-count">
                         <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-                        <span>0 Comment</span>
+                        <span> <span class="comment-length-${post._id}">0</span> Comment</span>
                     </div>
-                    <form action="/API/comment/{{this._id}}/create" method="post">
                         <div class="add-comment">
-                            <input type="text" placeholder="Add a comment..." name="content">
-                            <button>
-                                <ion-icon name="paper-plane"></ion-icon>
+                            <input type="text" placeholder="Add a comment..." name="content" class="input-comment-${post._id}">
+                            <button data-id="${post._id}" class="btnAddComment">
+                                <ion-icon data-id="${post._id}"  name="paper-plane"></ion-icon>
                             </button>
                         </div>
-                    </form>
                 </div>
-                <ul class="post-comment">
+                <ul class="post-comment" data-id="${post._id}" id="${post._id}">
                     
                 </ul>
             </div>

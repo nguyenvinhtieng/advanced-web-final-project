@@ -113,11 +113,14 @@ button:hover {
 .width-full {
     width: 100% !important;
 }
+.flex-1 {
+    flex: 1;
+}
 @media (max-width: 400px) {
     body {
         font-size: 12px;
     }
     .wrapper {
-        margin-top: 42px;
+        margin-top: 30px;
     }
 }

@@ -7,7 +7,7 @@ const multer = require("multer");
 router.post("/create", multer({ dest: "../../public/images/uploads", }).single("image"), PostController.createNewPost);
 router.post("/:id", checkUser, multer({ dest: "../../public/images/uploads/" }).single("image"), PostController.updatePost);
 router.delete("/:id", PostController.deletePost);
-router.get("/", PostController.getPosts);
+router.get("/", checkUser, PostController.getPosts);
 
 
 module.exports = router;

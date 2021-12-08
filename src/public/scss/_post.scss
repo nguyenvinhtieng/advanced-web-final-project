@@ -59,21 +59,29 @@
                     background-color: transparent;
                 }
                 & .item-operation.delete {
-                    padding: 5px 16px;
                     width: 100%;
-                    background-color: $whiteColor;
-                    color: $invalidColor;
-                    &:hover {
-                        background-color: $grayColor;
+                    margin-bottom: 12px;
+                    & label {
+                        padding: 5px 16px;
+                        background-color: $whiteColor;
+                        color: $invalidColor;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: $grayColor;
+                        }
                     }
                 }
                 & .item-operation.edit {
-                    padding: 5px 16px;
-                    width: 100%;
-                    background-color: $whiteColor;
-                    color: $secondaryColor;
-                    &:hover {
-                        background-color: $grayColor;
+                    min-width: 100%;
+                    & label {
+                        width: 70px;
+                        padding: 5px 16px;
+                        background-color: $whiteColor;
+                        color: $secondaryColor;
+                        cursor: pointer;
+                        &:hover {
+                            background-color: $grayColor;
+                        }
                     }
                 }
             }
@@ -110,8 +118,9 @@
             align-items: center;
             gap: 12px;
             border-bottom: 1px solid $grayColor;
+            font-size: 12px;
             & ion-icon {
-                font-size: 24px;
+                font-size: 14px;
             }
         }
         & .add-comment {
@@ -120,13 +129,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 0px;
+            border: 1px solid $grayColor;
             & input {
                 flex: 1;
-                padding: 8px 12px;
-                border: 1px solid $grayColor;
+                padding: 12px 12px;
                 outline: none;
+                border: none;
                 &:focus {
-                    border: 1px solid $primaryColor;
+                    // border: 1px solid $primaryColor;
                 }
             }
             & button {
@@ -164,8 +175,10 @@
             &-content {
                 background-color: $grayColor;
                 max-width: 60%;
-                padding: 12px;
-                border-radius: 6px;
+                padding: 6px 12px;
+                border-radius: 12px;
+                border-end-start-radius: 0px;
+                border: 1px solid rgb(167, 167, 167);
             }
             &-time {
                 font-size: 12px;
@@ -184,11 +197,11 @@
                 &-delete {
                     position: absolute;
                     z-index: 4;
-                    right: 100%;
-                    top: 100%;
+                    right: 110%;
+                    top: 30%;
                     background-color: $invalidColor;
                     color: #fff;
-                    padding: 2px 4px;
+                    padding: 4px 8px;
                     opacity: 0;
                     display: none;
                     cursor: pointer;

@@ -46,7 +46,7 @@
     <div class="post-interact">
         <div class="comment-count">
             <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-            <span>{{this.comments.length}} Comment</span>
+            <span> <span class="comment-length-{{this._id}}">{{this.comments.length}}</span> Comment</span>
         </div>
         {{!-- <form action="/API/comment/{{this._id}}/create" method="post"> --}}
             <div class="add-comment">

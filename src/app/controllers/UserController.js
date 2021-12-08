@@ -26,12 +26,16 @@ class UserController {
 
     async renderProfile(req, res, next) {
         const account = await Account.findOne({ _id: req.session.user_id }).lean();
-        const user = await Account.findOne({ _id: req.params.id }).lean();
-        const user_first_10_posts = await Post.find({ id_user: user._id })
-            .sort({ date: -1 })
-            .limit(10)
-            .lean();
-        res.render("./user/profile", { account, user, user_first_10_posts });
+        try {
+            const user = await Account.findOne({ _id: req.params.id }).lean();
+            const user_first_10_posts = await Post.find({ id_user: user._id })
+                .sort({ date: -1 })
+                .limit(10)
+                .lean();
+            res.render("./user/profile", { account, user, user_first_10_posts });
+        } catch (e) {
+            res.redirect('/404')
+        }
     }
 
     async updateAccount(req, res, next) {

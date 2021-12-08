@@ -5,7 +5,7 @@ const Department = require('./department')
 const Post_API = require('./API/post')
 const Comment_API = require('./API/comment')
 const Notification_API = require('./API/notification')
-
+const Error = require('./error')
 function route(app) {
     app.use('/department', Department)
     app.use('/admin', Admin)
@@ -14,5 +14,6 @@ function route(app) {
     app.use('/API/notification', Notification_API)
     app.use('/', User)
     app.use('/', Account)
+    app.use('/', Error)
 }
 module.exports = route;

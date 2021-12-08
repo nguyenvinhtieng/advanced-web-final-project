@@ -1,6 +1,7 @@
 {{> header/user}}
 {{!-- {{> modals/createNotification}} --}}
 <div id="notifications-page"></div>
+<div id="socket-page"></div>
 <div id="role-user">student</div>
 <div class="wrapper">
     <div class="notifications">
@@ -14,7 +15,7 @@
         <div class="notifications-content">
             <div class="notifications-listpage">
                 <ul>
-                    {{{checkPage count page category}}}
+                    {{{checkPage count page category department}}}
                     {{!-- <li class="notifications-page notifications-active">
                         <a href="">1</a>
                     </li> --}}
