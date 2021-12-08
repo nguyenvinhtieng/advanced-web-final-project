@@ -1297,7 +1297,7 @@ button:hover {
   max-width: 100%;
   max-height: 100%;
 }
-.modal-create-newpost .modal-image-preview .delete-img, .modal-edit-post .modal-image-preview .delete-img {
+.modal-create-newpost .modal-image-preview .delete-img, .modal-create-newpost .modal-image-preview .delete-img-edit, .modal-edit-post .modal-image-preview .delete-img, .modal-edit-post .modal-image-preview .delete-img-edit {
   position: absolute;
   top: 0;
   right: 0;
@@ -1306,14 +1306,17 @@ button:hover {
   font-weight: bold;
   height: 20px;
 }
-.modal-create-newpost .modal-image-preview .delete-img ion-icon, .modal-edit-post .modal-image-preview .delete-img ion-icon {
+.modal-create-newpost .modal-image-preview .delete-img ion-icon, .modal-create-newpost .modal-image-preview .delete-img-edit ion-icon, .modal-edit-post .modal-image-preview .delete-img ion-icon, .modal-edit-post .modal-image-preview .delete-img-edit ion-icon {
   position: absolute;
   top: 0;
   bottom: 0;
   right: 0;
 }
-.modal-create-newpost .modal-image-preview .delete-img:hover, .modal-edit-post .modal-image-preview .delete-img:hover {
+.modal-create-newpost .modal-image-preview .delete-img:hover, .modal-create-newpost .modal-image-preview .delete-img-edit:hover, .modal-edit-post .modal-image-preview .delete-img:hover, .modal-edit-post .modal-image-preview .delete-img-edit:hover {
   color: #ea5456;
+}
+.modal-create-newpost .modal-image-preview .delete-img-edit, .modal-edit-post .modal-image-preview .delete-img-edit {
+  display: none;
 }
 .modal-create-newpost .modal-footer, .modal-edit-post .modal-footer {
   width: 100%;

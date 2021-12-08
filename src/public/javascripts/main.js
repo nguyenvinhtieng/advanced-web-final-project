@@ -392,11 +392,20 @@ function eventEditPost() {
     let youtubeBox = document.querySelector('.youtube-link-edit-post')
     let imageBox = document.querySelector('.postImageEdit')
     let imgInput = document.getElementById('post-img-edit-post')
+    let btnDeleteImg = document.querySelector('.delete-img-edit')
+    let isDelete = document.querySelector('#edit-post-modal-delete-img')
+    btnDeleteImg.onclick = () => {
+        btnDeleteImg.style.display = "none"
+        imageBox.src = ""
+        imgInput.value = null
+        isDelete.value = "delete"
+    }
     window.addEventListener('click', (e) => {
         ///API/post/:id   post
         if (e.target.classList.contains('labelEditPost')) {
             idBox.value = e.target.getAttribute('data-id')
             contentBox.innerHTML = e.target.getAttribute('data-content')
+
             youtubeBox.value =
                 e.target.getAttribute('data-youtube') ?
                     ("https://www.youtube.com/watch?v=" + e.target.getAttribute('data-youtube').split('/')[4])
@@ -404,7 +413,9 @@ function eventEditPost() {
             if (e.target.getAttribute('data-img-link')) {
                 imageBox.src = e.target.getAttribute('data-img-link')
                 imageBox.parentNode.style.display = "block"
+                btnDeleteImg.style.display = "block"
             } else {
+                btnDeleteImg.style.display = "none"
                 imageBox.src = ""
                 imgInput.value = null
             }
@@ -414,6 +425,7 @@ function eventEditPost() {
     imgInput.addEventListener('change', (e) => {
         let preview = document.querySelector('.postImageEdit')
         preview.setAttribute("src", window.URL.createObjectURL(e.target.files[0]))
+        isDelete.value = ""
     })
     let formUpdatePost = document.querySelector('#formUpdatePost')
     formUpdatePost.onsubmit = function (e) {
