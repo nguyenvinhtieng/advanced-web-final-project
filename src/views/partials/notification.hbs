@@ -1,18 +1,18 @@
 <li class="home-notifications-item">
-    {{#if_eq this.userId @root.account._id}}
+    {{#if_eq this.userId @root.account._id false}}
     <a href="/department/notify/{{this._id}}">
-    {{else}}
-    <a href="/notify/{{this._id}}">
-    {{/if_eq}}
-        <div class="notification-department">
-            {{this.username}}
-            <div class="notification-time">21/2/2021</div>
-        </div>
-        <div class="notification-title">
-            {{this.title}}
-        </div>
-        <div class="notification-content">
-            {{this.content}}
-        </div>
-    </a>
+        {{else}}
+        <a href="/notify/{{this._id}}">
+            {{/if_eq}}
+            <div class="notification-department">
+                {{this.username}}
+                <div class="notification-time">21/2/2021</div>
+            </div>
+            <div class="notification-title">
+                {{this.title}}
+            </div>
+            <div class="notification-content">
+                {{this.content}}
+            </div>
+        </a>
 </li>
