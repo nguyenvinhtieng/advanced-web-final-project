@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="comment-time">{{this.date}}</div>
-    {{#if_eq this.id_user @root.account._id}}
+    {{#if_eq this.id_user @root.account._id @root.admin}}
     <div class="comment-operation">
         <ion-icon name="ellipsis-vertical"></ion-icon>
         <div class="comment-operation-delete">

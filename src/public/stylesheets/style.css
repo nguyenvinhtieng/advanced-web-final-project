@@ -784,6 +784,10 @@ button:hover {
 }
 .post-comment {
   list-style: none;
+  display: none;
+}
+.post-comment.active-comment {
+  display: inline-block;
 }
 .post-comment .comment {
   display: flex;
@@ -2163,6 +2167,11 @@ button:hover {
   padding: 8px 8px;
   border: 1px solid #ebebeb;
   outline: none;
+}
+
+.click-to-see-comment:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .page-404 {

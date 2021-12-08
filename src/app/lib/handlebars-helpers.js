@@ -1,11 +1,21 @@
 module.exports = {
-    if_eq: function (a, b, opts) {
-        // console.log(admin)
+    if_eq: function (a, b, admin, opts) {
+        a = a.toString();
+        b = b.toString();
+        if (a == b || admin) {
+            return opts.fn(this);
+        }
+        // else {
+        //     return opts.inverse(this);
+        // }
+    },
+    if_eq_prf: function (a, b, opts) {
         a = a.toString();
         b = b.toString();
         if (a == b) {
             return opts.fn(this);
-        } else {
+        }
+        else {
             return opts.inverse(this);
         }
     },

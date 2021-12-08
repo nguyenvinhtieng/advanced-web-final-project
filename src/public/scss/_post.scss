@@ -166,6 +166,10 @@
     }
     &-comment {
         list-style: none;
+        display: none;
+        &.active-comment {
+            display: inline-block;
+        }
         & .comment {
             display: flex;
             justify-content: flex-start;

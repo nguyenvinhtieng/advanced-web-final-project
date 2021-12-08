@@ -1,14 +1,14 @@
 {{> modals/updateInfor}}
-{{#if_eq account.role 'admin'}}
+{{#if_eq_prf account.role 'admin' }}
 <div id="admin"></div>
 {{> header/admin}}
-{{/if_eq}}
-{{#if_eq account.role 'department'}}
+{{/if_eq_prf}}
+{{#if_eq_prf account.role 'department' }}
 {{> header/department}}
-{{/if_eq}}
-{{#if_eq account.role 'student'}}
+{{/if_eq_prf}}
+{{#if_eq_prf account.role 'student' }}
 {{> header/user}}
-{{/if_eq}}
+{{/if_eq_prf}}
 <div id="profile-page"></div>
 <div id="socket-page"></div>
 <div id="role-user">student</div>
@@ -31,7 +31,7 @@
                 <p class="profile-data-faculty">
                     Faculty: {{user.faculty}}
                 </p>
-                {{#if_eq user._id account._id}}
+                {{#if_eq user._id account._id admin}}
                 <label for="modal-update-infor" class="profile-data-edit btn-edit-profile">
                     Edit profile <ion-icon name="create"></ion-icon>
                 </label>

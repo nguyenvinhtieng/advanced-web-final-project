@@ -26,13 +26,15 @@ class UserController {
 
     async renderProfile(req, res, next) {
         const account = await Account.findOne({ _id: req.session.user_id }).lean();
+        let admin = false
+        if (account.role == "admin") admin = true
         try {
             const user = await Account.findOne({ _id: req.params.id }).lean();
             const user_first_10_posts = await Post.find({ id_user: user._id })
                 .sort({ date: -1 })
                 .limit(10)
                 .lean();
-            res.render("./user/profile", { account, user, user_first_10_posts });
+            res.render("./user/profile", { account, user, user_first_10_posts, admin });
         } catch (e) {
             res.redirect('/404')
         }

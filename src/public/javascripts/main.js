@@ -208,6 +208,8 @@ function socketPage() {
         eventDeleteComment()
         eventAddComment()
         eventLoadMorePost("user")
+        eventViewComment()
+
     }
     //++++++++++++++++++++++
     // NOTIFICATIONS PAGE
@@ -317,11 +319,21 @@ function socketPage() {
         eventDeleteComment()
         eventAddComment()
         eventLoadMorePost()
+        eventViewComment()
     }
     //++++++++++++++++++++++
     // ACCOUNT PAGE
     // +++++++++++++++++++++++++
 
+}
+function eventViewComment() {
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('click-to-see-comment')) {
+            let post = e.target.parentNode.parentNode.parentNode
+            let comment = post.querySelector('.post-comment')
+            comment.classList.toggle('active-comment')
+        }
+    })
 }
 
 // login page
@@ -348,7 +360,6 @@ function eventDeletePost() {
     let btnDeletePost = document.querySelector('#btnDeletePost')
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('labelDeletePost')) {
-            console.log(e.target.getAttribute('data-id'))
             btnDeletePost.setAttribute('data-id', e.target.getAttribute('data-id'))
             postClicked = e.target
         }
@@ -376,7 +387,6 @@ function eventDeletePost() {
 }
 
 function eventEditPost() {
-    let postClicked = ''
     let contentBox = document.getElementById('postContentEdit')
     let idBox = document.getElementById('postIdEdit')
     let youtubeBox = document.querySelector('.youtube-link-edit-post')
@@ -600,7 +610,7 @@ function renderTenPost(posts, idUser, isAdmin = false) {
             <div class="post-interact">
                 <div class="comment-count">
                     <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-                    <span> <span class="comment-length-${post._id}">${post.comments.length}</span> Comment</span>
+                    <span class="click-to-see-comment"> <span class="comment-length-${post._id}">${post.comments.length}</span> Comment</span>
                 </div>
             <div class="add-comment">
                 <input type="text" placeholder="Add a comment..." name="content" class="input-comment-${post._id}">
@@ -685,7 +695,7 @@ function renderNewPost(post) {
                 <div class="post-interact">
                     <div class="comment-count">
                         <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-                        <span> <span class="comment-length-${post._id}">0</span> Comment</span>
+                        <span class="click-to-see-comment"> <span class="comment-length-${post._id}">0</span> Comment</span>
                     </div>
                         <div class="add-comment">
                             <input type="text" placeholder="Add a comment..." name="content" class="input-comment-${post._id}">

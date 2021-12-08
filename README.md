@@ -1,6 +1,17 @@
+# Note
+
+Còn thiếu:
+
+```diff
+- Update thông tin cá nhân của học sinh phần update ảnh chưa hoạt động
+- Update bài viết chưa hoạt động
+```
+
 # Run sass
 
 sass ./src/public/scss/app.scss ./src/public/stylesheets/style.css -w
+
+# BEFORE
 
 # Config
 

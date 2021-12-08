@@ -11,7 +11,7 @@
                 {{ this.date}}
             </div>
         </div>
-        {{#if_eq this.id_user @root.account._id}}
+        {{#if_eq this.id_user @root.account._id @root.admin}}
         <div class="post-header-operation">
             <ion-icon name="ellipsis-vertical-outline"></ion-icon>
             <ul class="list-operation">
@@ -46,7 +46,8 @@
     <div class="post-interact">
         <div class="comment-count">
             <ion-icon name="chatbox-ellipses-outline"></ion-icon>
-            <span> <span class="comment-length-{{this._id}}">{{this.comments.length}}</span> Comment</span>
+            <span class="click-to-see-comment"> <span
+                    class="comment-length-{{this._id}}">{{this.comments.length}}</span> Comment</span>
         </div>
         {{!-- <form action="/API/comment/{{this._id}}/create" method="post"> --}}
             <div class="add-comment">
