@@ -4,7 +4,16 @@ Còn thiếu:
 
 ```diff
 - Update thông tin cá nhân của học sinh phần update ảnh chưa hoạt động
-- Update bài viết chưa hoạt động
+- Update bài viết chưa hoạt động nên bên view chưa update được
+- Validate dữ liệu thì đa phần đã kiểm tra bên view rồi nên bên server có thể bỏ qua đỡ mắc công(còn k thì vẫn kiểm tra được)
+```
+
+Note:
+
+```diff
++ Bên view đã viết sẵn hàm tạo flash message nên bên server muốn thông báo thì gọi hàm setFlashMessage, rồi truyền middleware flash vào route muốn thông báo
+ ex: req.session.flash = setFlashMessage('error', 'Invalid account', "Tài khoản hoặc mật khẩu không chính xác")
+> router.get('/login', flash, AccountController.renderLogin)
 ```
 
 # Run sass
