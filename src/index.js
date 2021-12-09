@@ -9,7 +9,7 @@ const app = express();
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 const credentials = require('./config/credentials');
 const route = require('./route/index');
@@ -40,8 +40,8 @@ route(app)
 
 initAdmin.createAdminAccount();
 
-server.listen(PORT, () => {
-    console.log(`App listening at http://localhost:${PORT}`);
+server.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
 })
 
 handleSocket(io)
