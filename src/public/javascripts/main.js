@@ -426,6 +426,8 @@ function eventEditPost() {
         let preview = document.querySelector('.postImageEdit')
         preview.setAttribute("src", window.URL.createObjectURL(e.target.files[0]))
         isDelete.value = ""
+        document.querySelector('.preview-image-edit').style.display = "block"
+        document.querySelector('.delete-img-edit').setAttribute("style", "display: block")
     })
     let formUpdatePost = document.querySelector('#formUpdatePost')
     formUpdatePost.onsubmit = function (e) {
@@ -443,20 +445,100 @@ function eventEditPost() {
             return
         }
         const body = new FormData(e.target)
-        console.log("url: " + `/API/post/${postId}`)
+        showInfoToast("Post being processed")
+        document.querySelector('#modal-edit-post').checked = false
+
         fetch(`/API/post/${postId}`, { method: 'post', body })
-            // .then(res => res.json())
-            .then(res => {
-                console.log("runnning..........2")
-                console.log(res)
-                console.log(res.json())
-            })
-            .catch(error =>
-                console.log(error)
-            )
+            .then(response => response.json())
+            .then(data => {
+                updatePostToView(data)
+            });
     }
 }
-
+function updatePostToView(data) {
+    let post = data.updatePost
+    showSuccessToast("Post updated!")
+    console.log(post)
+    let postNeedUpdate = document.getElementById(`${post._id}`).parentNode
+    postNeedUpdate.innerHTML = `
+    <div class="post-header">
+                    <div class="avatar-sm">
+                        <img src='${post.userAvatar}' alt="Khoa Công Nghệ Thông Tin DH TDT">
+                    </div>
+                    <div class="post-header-infor">
+                        <a href="/user/${post.id_user}" class="post-header-name">
+                            ${post.username}
+                        </a>
+                        <div class="post-header-time">
+                            ${post.date}
+                        </div>
+                    </div>
+                    <div class="post-header-operation">
+                        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+                        <ul class="list-operation">
+                            <li class="item-operation delete">
+                                <label for="modal-delete-post" class="labelDeletePost" data-id="${post._id}"> Delete </label>
+                            </li>
+                            <li class="item-operation edit">
+                                <label data-id="${post._id}" data-content="${post.content}" data-img-link="${post.imagePath}" data-youtube="${post.urlYoutube}" class="labelEditPost" for="modal-edit-post"> Edit </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <div class="post-text">
+                        ${post.content}
+                    </div>
+                    ${post.imagePath ? `<div class="post-img">
+                                            <img src="${post.imagePath}" alt="">
+                                        </div>` : ""}
+                    ${post.urlYoutube ? `<div class="post-video">
+                                            <iframe width="560" height="315" src=${post.urlYoutube} title="YouTube video player" frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
+                                        </div>` : ``}
+                    
+                </div>
+                <div class="post-interact">
+                    <div class="comment-count">
+                        <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                        <span class="click-to-see-comment"> <span class="comment-length-${post._id}">${post.comments.length}</span> Comment</span>
+                    </div>
+                        <div class="add-comment">
+                            <input type="text" placeholder="Add a comment..." name="content" class="input-comment-${post._id}">
+                            <button data-id="${post._id}" class="btnAddComment">
+                                <ion-icon data-id="${post._id}"  name="paper-plane"></ion-icon>
+                            </button>
+                        </div>
+                </div>
+                <ul class="post-comment" data-id="${post._id}" id="${post._id}">
+                    ${post.comments.map(comment => {
+        return `<li class="comment">
+                        <div class="avatar-sm">
+                            <img src="${comment.userAvatar}" alt="">
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-user">
+                                <span>${comment.username}</span>
+                            </div>
+                            <div class="comment-text">
+                                ${comment.content}
+                            </div>
+                        </div>
+                        <div class="comment-time">${comment.date}</div>
+                        ${comment.id_user == post.id_user ?
+                (`<div class="comment-operation">
+                            <ion-icon name="ellipsis-vertical"></ion-icon>
+                            <div class="comment-operation-delete">
+                                <label class="delete labelDeleteComment" for="modal-delete-comment" data-id="${comment._id}">Delete</label>
+                            </div>
+                        </div>`) : ``}
+                        
+                    </li>`
+    }).join('')}
+                </ul>
+    `
+}
 function eventDeleteComment() {
     let btnDeleteComment = document.querySelector('.btnDeleteComment')
     var commentClicked = ''

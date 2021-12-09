@@ -30,36 +30,19 @@ class PostController {
     }
 
     async updatePost(req, res) {
-        // const account = req.account;
-        // const { id } = req.params;
-        // const { content, urlYoutube, deleteimage } = req.body;
-        
-        // const imagePath = await uploadImage(req.file.path, req.file.filename);
-        // if (deleteimage) {
-        //     imagePath = "";
-        // }
-        // const updatePost = await Post.findByIdAndUpdate(id, {
-        //     content,
-        //     imagePath,
-        //     urlYoutube,
-        // });
-        // res.status(200).send({ updatePost });
-        const account = req.account;
         const { id } = req.params;
-        const { content, urlYoutube, deleteimage } = req.body;
+        let { content, urlYoutube, deleteimage } = req.body;
+        urlYoutube = urlYoutube.replace("watch?v=", "embed/");
+        const data = { content, urlYoutube }
         if (req.file) {
             const imagePath = await uploadImage(req.file.path, req.file.filename);
-            const data = { content, urlYoutube, imagePath };
-            const updatePost = await Post.findByIdAndUpdate(id, data);
+            data.imagePath = imagePath;
         }
         if (deleteimage) {
-            const imagePath = ""
-            const data = { content, urlYoutube };
-            const updatePost = await Post.findByIdAndUpdate(id, data);
+            data.imagePath = "";
         }
-        const data = { content, urlYoutube };
-        const updatePost = await Post.findByIdAndUpdate(id, data);
-        res.status(200).send({ updatePost });
+        const updatePost = await Post.findByIdAndUpdate(id, data, { new: true });
+        return res.status(200).json({ updatePost })
     }
 
     async deletePost(req, res) {
