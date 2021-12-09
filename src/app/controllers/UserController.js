@@ -46,10 +46,10 @@ class UserController {
         // account.class = req.body.class;
         // account.faculty = req.body.faculty;
         let account = await Account.findOneAndUpdate({ _id: req.account._id }, req.body)
-        console.log(account);
         if (req.file) {
             account.avatar = await uploadImage(req.file.path, req.file.filename);
         }
+        await account.save();
         res.redirect('back')
     }
 }

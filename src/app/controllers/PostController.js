@@ -30,28 +30,36 @@ class PostController {
     }
 
     async updatePost(req, res) {
-        console.log("UPDATE POST SERVER RUNNING")
-        const account = req.account;
-        const { id } = req.params;
-        const imagePath = await uploadImage(req.file.path, req.file.filename);
-        const { content, urlYoutube } = req.body;
-        const updatePost = await Post.findByIdAndUpdate(id, {
-            content,
-            imagePath,
-            urlYoutube,
-        });
-        res.status(200).send({ updatePost });
         // const account = req.account;
         // const { id } = req.params;
-        // console.log("UPDATE POST SERVER")
-        // if (req.file) {
-        //     const imagePath = await uploadImage(req.file.path, req.file.filename);
+        // const { content, urlYoutube, deleteimage } = req.body;
+        
+        // const imagePath = await uploadImage(req.file.path, req.file.filename);
+        // if (deleteimage) {
+        //     imagePath = "";
         // }
-        // const { content, urlYoutube } = req.body;
-        // const data = { content, urlYoutube }
-        // if (imagePath) { data.imagePath = imagePath };
-        // const updatePost = await Post.findByIdAndUpdate(id, data);
+        // const updatePost = await Post.findByIdAndUpdate(id, {
+        //     content,
+        //     imagePath,
+        //     urlYoutube,
+        // });
         // res.status(200).send({ updatePost });
+        const account = req.account;
+        const { id } = req.params;
+        const { content, urlYoutube, deleteimage } = req.body;
+        if (req.file) {
+            const imagePath = await uploadImage(req.file.path, req.file.filename);
+            const data = { content, urlYoutube, imagePath };
+            const updatePost = await Post.findByIdAndUpdate(id, data);
+        }
+        if (deleteimage) {
+            const imagePath = ""
+            const data = { content, urlYoutube };
+            const updatePost = await Post.findByIdAndUpdate(id, data);
+        }
+        const data = { content, urlYoutube };
+        const updatePost = await Post.findByIdAndUpdate(id, data);
+        res.status(200).send({ updatePost });
     }
 
     async deletePost(req, res) {
