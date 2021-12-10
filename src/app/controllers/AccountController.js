@@ -21,7 +21,7 @@ class AccountController {
         let account = await Account.findOne({ email: req.user.emails[0].value });
         if (account) {
             req.session.user_id = account._id;
-            res.redirect("http://35.198.198.67/home");
+            res.redirect("//35.198.198.67/home");
         } else {
             next();
         }
@@ -43,7 +43,7 @@ class AccountController {
         const account = new Account(data);
         await account.save();
         req.session.user_id = account._id;
-        res.redirect("http://35.198.198.67/home");
+        res.redirect("//35.198.198.67/home");
     }
 
     async loginByAccount(req, res, next) {
