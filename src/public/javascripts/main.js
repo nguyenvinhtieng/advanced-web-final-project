@@ -1,3 +1,5 @@
+var page = 0;
+
 function toast({ title = "", message = "", type = "info", duration = 3000 }) {
     const main = document.getElementById("toast");
     if (main) {
@@ -621,37 +623,42 @@ function renderNewComment(comment, idTag) {
 }
 
 function eventLoadMorePost(user = "") {
-    let isAdmin = document.querySelector('#admin') ? true : false;
-    var page = 1;
     let idUserURL
     if (user)
         idUserURL = window.location.href.split('/')[4];
+    let url = user ? `/API/post?page=${page}&user=${idUserURL}` : `/API/post?page=${page}`
+    let isAdmin = document.querySelector('#admin') ? true : false;
+    loadMore(url, isAdmin)
     window.addEventListener("load", e => {
         $(window).scroll(function () {
             var position = $(window).scrollTop();
             var bottom = $(document).height() - $(window).height();
             if (position >= bottom) {
                 console.log("LOADING ...........................")
-                let url = user ? `/API/post?page=${page}&user=${idUserURL}` : `/API/post?page=${page}`
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: response => {
-                        if (response.posts.length == 0) {
-                            document.querySelector('.read-all-post').style.display = 'flex'
-                        } else {
-                            page++;
-                            renderTenPost(response.posts, response.user, isAdmin)
-                        }
-                    }
-                })
+                url = user ? `/API/post?page=${page}&user=${idUserURL}` : `/API/post?page=${page}`
+                loadMore(url, isAdmin)
             }
         });
 
     })
 }
-
+function loadMore(url, isAdmin) {
+    console.log("URL : " + url)
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: response => {
+            if (response.posts.length == 0) {
+                document.querySelector('.read-all-post').style.display = 'flex'
+            } else {
+                page = page + 1
+                renderTenPost(response.posts, response.user, isAdmin)
+            }
+        }
+    })
+}
 function renderTenPost(posts, idUser, isAdmin = false) {
+    console.log(posts)
     let main = document.querySelector('#posts')
     if (posts.length === 0) {
         main.innerHTML += "<div class='read-all-post'> You are read all posts</div>"
@@ -670,7 +677,7 @@ function renderTenPost(posts, idUser, isAdmin = false) {
                         ${post.username}
                     </a>
                     <div class="post-header-time">
-                        ${post.date}
+                        ${moment(post.date).fromNow()}
                     </div>
                 </div>
                 ${(post.id_user == idUser || isAdmin) ? (
@@ -727,7 +734,7 @@ function renderTenPost(posts, idUser, isAdmin = false) {
                                         ${comment.content}
                                     </div>
                                 </div>
-                                <div class="comment-time">${comment.date}</div>
+                                <div class="comment-time"> ${moment(comment.date).fromNow()}</div>
                                 ${(comment.id_user == idUser || isAdmin) ? (`
                                 <div class="comment-operation">
                                     <ion-icon name="ellipsis-vertical"></ion-icon>
