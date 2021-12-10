@@ -8,7 +8,7 @@ module.exports = {
     clientID:
       "459825136805-c1lbq1urssbu0risuki18c6uoja51o6n.apps.googleusercontent.com",
     clientSecret: "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",
-    callbackURL: "http://35.198.198.67/google/callback",
+    callbackURL: "http://35.198.198.67.nip.io/google/callback",
   },
 };
 //459825136805-c1lbq1urssbu0risuki18c6uoja51o6n.apps.googleusercontent.com
